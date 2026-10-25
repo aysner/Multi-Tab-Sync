@@ -1,0 +1,50 @@
+name: Release
+
+# Jeder Push auf main erzeugt ein Release mit dem fertigen Web-Store-ZIP.
+# Version: <major>.<minor> aus manifest.json + fortlaufende Run-Nummer,
+# z.B. manifest 1.0.0 -> v1.0.42. Für einen Minor-/Major-Sprung die
+# Version in manifest.json anheben.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Version bestimmen
+        id: version
+        run: |
+          base=$(node -p "require('./manifest.json').version.split('.').slice(0, 2).join('.')")
+          echo "version=${base}.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        id: build
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: ./scripts/build.sh
+
+      - name: Release erstellen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.build.outputs.version }}
+          ZIP: ${{ steps.build.outputs.zip }}
+        run: |
+          gh release create "v${VERSION}" "${ZIP}" \
+            --title "Multi-Tab Sync v${VERSION}" \
+            --target "${GITHUB_SHA}" \
+            --generate-notes

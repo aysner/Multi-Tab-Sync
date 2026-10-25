@@ -3,8 +3,18 @@
   "name": "Multi-Tab Sync",
   "version": "1.0.0",
   "description": "Spiegelt Scrollen, Klicks, Tastatureingaben und Navigation auf mehrere Tabs – z.B. Staging vs. Produktion.",
-  "permissions": ["tabs", "scripting", "storage", "debugger"],
-  "host_permissions": ["<all_urls>"],
+  "author": {
+    "email": "chrome@aysner.at"
+  },
+  "permissions": [
+    "tabs",
+    "scripting",
+    "storage",
+    "debugger"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -26,11 +36,15 @@
   },
   "commands": {
     "toggle-sync": {
-      "suggested_key": { "default": "Alt+Shift+S" },
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
       "description": "Sync ein-/ausschalten"
     },
     "toggle-tab": {
-      "suggested_key": { "default": "Alt+Shift+A" },
+      "suggested_key": {
+        "default": "Alt+Shift+A"
+      },
       "description": "Aktuellen Tab zur Sync-Gruppe hinzufügen/entfernen"
     }
   }

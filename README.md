@@ -75,6 +75,19 @@ Im Präzisionsmodus gilt außerdem:
 
 Das Skript startet die Testseite auf `http://127.0.0.1:8001` („Staging“) und `http://127.0.0.1:8002` („Prod“). Öffne beide, verbinde sie im Popup und probiere Scrollen, Klicks, Formulare, Shadow DOM, Links und Navigation aus.
 
+## Build & Release
+
+```bash
+./scripts/build.sh                 # -> dist/multi-tab-sync-<version>.zip
+VERSION=1.2.3 ./scripts/build.sh   # Version nur für den Build überschreiben
+```
+
+Das ZIP enthält nur die Laufzeitdateien und kann direkt im [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole) hochgeladen werden. Vor dem Packen prüft das Skript Version, Syntax, Web-Store-Limits und referenzierte Dateien.
+
+Jeder Push auf `main` erstellt per GitHub Actions (`.github/workflows/release.yml`) ein Release mit dem ZIP. Die Version setzt sich aus `<major>.<minor>` aus `manifest.json` und der Run-Nummer zusammen, z.B. `v1.0.42`. Für einen Versionssprung hebst du die Version in `manifest.json` an.
+
+Die Datenschutzerklärung für den Web Store steht in [`PRIVACY.md`](PRIVACY.md), auf Englisch und Deutsch.
+
 ## Aufbau
 
 ```
