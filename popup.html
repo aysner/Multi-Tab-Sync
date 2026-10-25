@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Multi-Tab Sync</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="icons/icon32.png" alt="" width="20" height="20">
+    <h1>Multi-Tab Sync</h1>
+    <label class="switch" title="Sync ein/aus (Alt+Shift+S)">
+      <input type="checkbox" id="enabled">
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <h2>Tabs</h2>
+      <span class="hint" id="count"></span>
+    </div>
+    <ul id="tabs"></ul>
+    <button id="tile" type="button">Ausgewählte Tabs nebeneinander anordnen</button>
+  </section>
+
+  <section>
+    <h2>Synchronisieren</h2>
+    <div class="grid">
+      <label><input type="checkbox" data-opt="scroll"> Scrollen</label>
+      <label><input type="checkbox" data-opt="click"> Klicks</label>
+      <label><input type="checkbox" data-opt="keys"> Tastatur &amp; Eingaben</label>
+      <label><input type="checkbox" data-opt="nav"> Navigation (Pfad)</label>
+    </div>
+    <label class="row">
+      Scroll-Position
+      <select data-opt="scrollMode">
+        <option value="absolute">absolut (Pixel)</option>
+        <option value="relative">relativ (% der Seite)</option>
+      </select>
+    </label>
+  </section>
+
+  <section class="precision">
+    <label class="row">
+      <span>
+        <strong>Präzisionsmodus</strong>
+        <span class="hint">Echte Klicks &amp; Tastendrücke per Debugger-API. Chrome zeigt dabei eine gelbe Hinweisleiste.</span>
+      </span>
+      <span class="switch">
+        <input type="checkbox" data-opt="precision">
+        <span class="slider"></span>
+      </span>
+    </label>
+  </section>
+
+  <footer class="hint">Alt+Shift+A: aktuellen Tab hinzufügen/entfernen · Passwortfelder werden nie gespiegelt</footer>
+
+  <template id="tab-row">
+    <li>
+      <label>
+        <input type="checkbox">
+        <img class="favicon" alt="" width="16" height="16">
+        <span class="text">
+          <span class="title"></span>
+          <span class="url"></span>
+          <span class="error"></span>
+        </span>
+        <span class="warn" hidden>⚠</span>
+      </label>
+    </li>
+  </template>
+
+  <script src="popup.js"></script>
+</body>
+</html>

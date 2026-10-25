@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multi-Tab Sync – Testseite</title>
+  <style>
+    body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 0 24px 24px; }
+    #env { position: sticky; top: 0; padding: 8px 12px; margin: 0 -24px 16px; color: #fff; font-weight: 600; z-index: 1; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin: 16px 0; }
+    #inner-scroll { height: 140px; overflow: auto; }
+    #inner-scroll p { margin: 0; padding: 4px 0; border-bottom: 1px solid #eee; }
+    .filler { height: 900px; background: repeating-linear-gradient(#fafafa 0 40px, #f0f0f0 40px 80px); }
+    label { display: block; margin: 6px 0; }
+    #log { font: 12px/1.4 monospace; white-space: pre-wrap; max-height: 160px; overflow: auto; background: #f6f6f6; padding: 8px; }
+  </style>
+</head>
+<body>
+  <div id="env"></div>
+  <h1>Testseite</h1>
+  <p>Öffne diese Seite zweimal (Port 8001 = „Staging“, Port 8002 = „Prod“), wähle beide Tabs im Popup aus und aktiviere den Sync.</p>
+
+  <div class="box">
+    <h2>Klicks</h2>
+    <button id="counter" type="button">Zähler: <span>0</span></button>
+    <button type="button" ondblclick="this.textContent = 'Doppelklick erkannt ✔'">Doppelklick mich</button>
+    <p><a href="page2.html">Link zu Seite 2</a> · <a href="#abschnitt">Anker-Link</a></p>
+    <shadow-widget></shadow-widget>
+  </div>
+
+  <div class="box">
+    <h2>Eingaben</h2>
+    <form id="form" onsubmit="event.preventDefault(); log('Formular abgeschickt: ' + new FormData(this).get('name'))">
+      <label>Name <input name="name" autocomplete="off"></label>
+      <label>Passwort (wird nicht gespiegelt) <input name="pw" type="password"></label>
+      <label>Kommentar <textarea name="comment" rows="2"></textarea></label>
+      <label>Auswahl
+        <select name="choice">
+          <option>Alpha</option><option>Beta</option><option>Gamma</option>
+        </select>
+      </label>
+      <label><input type="checkbox" name="agree"> Checkbox mit Label</label>
+      <label><input type="radio" name="r" value="1"> Radio 1</label>
+      <label><input type="radio" name="r" value="2"> Radio 2</label>
+      <div contenteditable="true" id="editor" style="border:1px dashed #aaa; padding:6px; min-height: 2em">Contenteditable</div>
+      <button>Absenden (Enter im Namensfeld)</button>
+    </form>
+  </div>
+
+  <div class="box">
+    <h2>Verschachtelter Scroll-Bereich</h2>
+    <div id="inner-scroll"></div>
+  </div>
+
+  <div class="box">
+    <h2>Log</h2>
+    <div id="log"></div>
+  </div>
+
+  <div class="filler"></div>
+  <h2 id="abschnitt">Abschnitt (Anker-Ziel)</h2>
+  <div class="filler"></div>
+
+  <script>
+    const isProd = location.port === '8002';
+    const env = document.getElementById('env');
+    env.textContent = isProd ? 'PRODUKTION (:8002)' : 'STAGING (:8001)';
+    env.style.background = isProd ? '#b91c1c' : '#1d4ed8';
+
+    function log(msg) {
+      const el = document.getElementById('log');
+      el.textContent = `${new Date().toLocaleTimeString()}  ${msg}\n` + el.textContent;
+    }
+
+    const counter = document.getElementById('counter');
+    counter.addEventListener('click', () => {
+      const span = counter.querySelector('span');
+      span.textContent = Number(span.textContent) + 1;
+    });
+
+    const inner = document.getElementById('inner-scroll');
+    for (let i = 1; i <= 50; i++) inner.insertAdjacentHTML('beforeend', `<p>Zeile ${i}</p>`);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target === document.body) log(`keydown auf body: ${e.key}`);
+    });
+    document.querySelector('[name=choice]').addEventListener('change', (e) => log('Auswahl: ' + e.target.value));
+    document.querySelector('[name=agree]').addEventListener('change', (e) => log('Checkbox: ' + e.target.checked));
+
+    customElements.define('shadow-widget', class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = '<button type="button">Shadow-DOM-Button: <b>0</b></button>';
+        const b = root.querySelector('b');
+        root.querySelector('button').addEventListener('click', () => { b.textContent = Number(b.textContent) + 1; });
+      }
+    });
+  </script>
+</body>
+</html>
